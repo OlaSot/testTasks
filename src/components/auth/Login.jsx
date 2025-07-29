@@ -20,6 +20,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { FaLock, FaEnvelope, FaExclamationCircle, FaSpinner } from "react-icons/fa";
+import Dashboard from "../../pages/AdminPages/Dashboard";
+
 
 const Login = () => {
   // State management with proper initialization
@@ -128,6 +130,7 @@ const Login = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600 p-6">
+      
       <div className="bg-white shadow-lg rounded-xl p-8 w-full max-w-md transform transition duration-300 hover:scale-105">
         {/* Header */}
         <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">

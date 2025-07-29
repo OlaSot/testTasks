@@ -9,6 +9,7 @@ import UserSidebar from "./UserSidebar";
 import Column from "./Column";
 import SortableItem from "./SortableItem";
 import notificationSound from "./notification.mp3";
+import TaskFilter from "../../components/tasks/TaskFilter";
 
 const UserDashboard = () => {
   const [tasks, setTasks] = useState({
@@ -26,15 +27,28 @@ const UserDashboard = () => {
   }, []);
 
   useEffect(() => {
-    const storedTasks = JSON.parse(localStorage.getItem("tasks")) || [];
-    const categorizedTasks = {
-      "To Do": storedTasks.filter((task) => task.progress <= 40),
-      "In Progress": storedTasks.filter((task) => task.progress > 40 && task.progress <= 80),
-      Completed: storedTasks.filter((task) => task.progress > 80),
-    };
-    setTasks(categorizedTasks);
-    checkDeadlines(storedTasks);
-  }, []);
+  const storedTasks = JSON.parse(localStorage.getItem("tasks")) || [];
+
+  // Добавляем поле status, чтобы TaskFilter работал
+  const normalizedTasks = storedTasks.map((task) => {
+    let status = "incomplete";
+    if (task.progress > 80) status = "complete";
+    return { ...task, status };
+  });
+
+  // Сохраняем обратно в localStorage, чтобы TaskFilter увидел изменения
+  localStorage.setItem("tasks", JSON.stringify(normalizedTasks));
+
+  const categorizedTasks = {
+    "To Do": normalizedTasks.filter((task) => task.progress <= 40),
+    "In Progress": normalizedTasks.filter((task) => task.progress > 40 && task.progress <= 80),
+    Completed: normalizedTasks.filter((task) => task.progress > 80),
+  };
+
+  setTasks(categorizedTasks);
+  checkDeadlines(normalizedTasks);
+}, []);
+
 
   useEffect(() => {
     localStorage.setItem("notes", notes);
@@ -112,6 +126,7 @@ const UserDashboard = () => {
         <h2 className="text-4xl font-bold text-gray-900 mb-6 text-center bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text">
           🚀 User Dashboard
         </h2>
+         <TaskFilter /> 
         <ToastContainer position="top-right" autoClose={5000} hideProgressBar />
 
         {/* Kanban Board */}
